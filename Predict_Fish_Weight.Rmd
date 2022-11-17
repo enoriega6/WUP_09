@@ -1,7 +1,7 @@
 ---
-title: "Logistic Regression Donner Party"
-author: "Dr K"
-date: "November 19, 2018"
+title: "Logistic Regression Predict Fish Weight"
+author: "Eduardo Noriega"
+date: "November 16,2022"
 output: html_document
 ---
  
@@ -12,7 +12,7 @@ require(tidyverse)
 library (leaps)
 ```
 
-## import fist CSV using the import function that Luz
+## import fist CSV using the import function that Luz found
 
 # Predicting Fish Weight  
 
@@ -50,14 +50,64 @@ The Best two variables are height and width.
 
 ## Pike
 
+```{r}
+Fish = read.csv('Fish.csv')
+Pike = filter(Fish, Species == 'Pike')
+Pike = subset (Pike, select= -Species)
+weightPike = lm(Weight~Length1+Length2+Length3+Height+Width,data=Pike)
+summary.lm(weightPike)
+```
+
+```{r}
+regsubsets.out <-
+    regsubsets(Weight ~. , data = Pike,
+               nbest = 1,       # 1 best model for each number of predictors
+               nvmax = NULL,    # NULL for no limit on number of variables
+               force.in = NULL, force.out = NULL,
+               method = "exhaustive")
+
+summary.out <- summary(regsubsets.out)
+as.data.frame(summary.out$outmat)
+```
+
+Length1 and Length3 are the best two models.
+
+
+
+
 ### Best Models
 
-### Best Two regressor model
 
 ## Roach
+```{r}
+Fish = read.csv('Fish.csv')
+Roach = filter(Fish, Species == 'Roach')
+Roach = subset (Roach, select= -Species)
+weightRoach = lm(Weight~Length1+Length2+Length3+Height+Width,data=Roach)
+summary.lm(weightRoach)
+```
+
+
+
+### Best Two regressor model
+```{r}
+regsubsets.out <-
+    regsubsets(Weight ~. , data =Roach,
+               nbest = 1,       # 1 best model for each number of predictors
+               nvmax = NULL,    # NULL for no limit on number of variables
+               force.in = NULL, force.out = NULL,
+               method = "exhaustive")
+
+summary.out <- summary(regsubsets.out)
+as.data.frame(summary.out$outmat)
+```
+
+The best two models are Width and Length3
+
 
 ### Best Models
 
 ### Best Two regressor model
 
 ## Final Summary Statements
+The adjusted R-squared=0.9372 for Perch, adjusted R-squared=0.9794 for Pike,and the adjusted R-squared=0.821 for Roach. Pike has the highest adjusted r-squared where it Length1 and Length3 were the best models for it.
